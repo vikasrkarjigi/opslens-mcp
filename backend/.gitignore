@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+data/sensor_logs.csv
+data/assets.json
+data/maintenance_history.json
+data/incidents.json
+data/quality_records.json
+data/safety_protocols.json
+# committed (hand-curated): demo_incidents.json, sop_documents.md

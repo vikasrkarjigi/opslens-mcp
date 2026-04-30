@@ -1,0 +1,41 @@
+[
+  {
+    "incident_id": "INC-1042",
+    "title": "Bearing / vibration anomaly on PUMP-204 drive end",
+    "asset_id": "PUMP-204",
+    "site": "PLANT-1",
+    "shift": "Night (22:00-06:00)",
+    "reporter": "Operator Sandra K.",
+    "reported_at": "2025-09-21T03:14:00Z",
+    "status": "open",
+    "affected_batch": "B-218",
+    "description": "Drive-end vibration trending up sharply since Sunday night; bearing temperature elevated. Recent maintenance work-order replaced the seal but the alignment check is NOT documented on Form QA-MAINT-04A.",
+    "severity_hint": "caution"
+  },
+  {
+    "incident_id": "INC-2031",
+    "title": "Outlet temperature drift on HX-307 over 3 days",
+    "asset_id": "HX-307",
+    "site": "PLANT-2",
+    "shift": "Day (06:00-14:00)",
+    "reporter": "Quality Eng. Marco R.",
+    "reported_at": "2025-09-19T14:02:00Z",
+    "status": "open",
+    "affected_batch": "B-201",
+    "description": "Outlet temperature has drifted 6 C above spec across the last 3 batches. Flow trending down. Quality flagged 25.8 % rejection rate on B-201; customer notification pending. Suspect tube-side fouling.",
+    "severity_hint": "caution"
+  },
+  {
+    "incident_id": "INC-3005",
+    "title": "Electrical anomaly on MTR-512 — safety escalation",
+    "asset_id": "MTR-512",
+    "site": "PLANT-2",
+    "shift": "Swing (14:00-22:00)",
+    "reporter": "Maintenance Lead Priya S.",
+    "reported_at": "2025-09-22T16:48:00Z",
+    "status": "escalated",
+    "affected_batch": "B-215",
+    "description": "Phase current imbalance climbed from 4 % to 8.7 % over the week; winding temperature now exceeds nameplate. Operator reported a faint burning smell during the swing shift. Batch B-215 quarantined for electrical safety review.",
+    "severity_hint": "critical"
+  }
+]

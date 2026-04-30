@@ -1,0 +1,13 @@
+fastapi>=0.115,<0.117
+uvicorn[standard]>=0.30,<0.32
+pydantic>=2.10.1,<3
+pydantic-settings>=2.6.1,<3
+anthropic>=0.39,<1
+mcp>=1.2,<2
+httpx>=0.27,<0.29
+python-multipart>=0.0.12
+numpy>=2.1,<3
+pandas>=2.2,<3
+python-dotenv>=1.0
+sse-starlette>=2.1,<3
+

@@ -1,0 +1,49 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / Next
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Build / cache
+dist/
+build/
+coverage/
+.cache/
+
+# Generated synthetic data (re-created on first run)
+backend/data/sensor_logs.csv
+backend/data/assets.json
+backend/data/maintenance_history.json
+backend/data/incidents.json
+backend/data/quality_records.json
+backend/data/safety_protocols.json
+
+# Misc
+*.log
