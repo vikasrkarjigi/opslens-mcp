@@ -26,7 +26,18 @@ class Settings(BaseSettings):
     mcp_server_args: list[str] = ["-m", "mcp_server.server"]
 
     # CORS
-    cors_origins: list[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    # Exact origins (local dev + the production Vercel domain).
+    cors_origins: list[str] = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3000",
+        "https://opslens-mcp.vercel.app",
+    ]
+    # Regex to also allow every Vercel preview deployment URL
+    # (e.g. https://opslens-mcp-git-feature-username.vercel.app).
+    # Starlette's CORSMiddleware does not glob `allow_origins`, so we hand it
+    # this pattern via `allow_origin_regex` instead.
+    cors_origin_regex: str = r"https://.*\.vercel\.app"
 
     # Orchestrator
     max_debate_rounds: int = 2
