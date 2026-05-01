@@ -306,12 +306,12 @@ class SafetyCriticAgent(BaseAgent):
             blocking = []
             if electrical_critical:
                 blocking.append(
-                    "Electrical safety threshold exceeded — restart prohibited "
+                    "Electrical safety threshold exceeded. Restart prohibited "
                     "until licensed electrician clears per SOP-ELEC-02."
                 )
             if danger_word:
                 blocking.append(
-                    f"Operator reported '{danger_word}' — escalate immediately per SOP-ELEC-02."
+                    f"Operator reported '{danger_word}'. Escalate immediately per SOP-ELEC-02."
                 )
         elif critical or "electrical" in desc:
             status = "CAUTION_REQUIRED"
@@ -357,6 +357,12 @@ class SynthesisAgent(BaseAgent):
 
     def run(self, ctx: AgentContext, round_num: int) -> AgentMessage:
         evidence = ctx.shared_findings
+        # Publish the structured known-unknowns list BEFORE producing narrative
+        # so that the orchestrator-built checklist and the synthesis agent's
+        # bullets are derived from the exact same source. This eliminates the
+        # historical mismatch between the agent's reasoning text and the
+        # report's `known_unknowns` field.
+        ctx.shared_findings["known_unknowns"] = self._known_unknowns(evidence)
         bullets = self.reason(ctx, evidence)
         tool_calls = []
 
@@ -393,17 +399,29 @@ class SynthesisAgent(BaseAgent):
             top *= 0.7
         return round(min(top, 0.92), 2)
 
+    def _known_unknowns(self, evidence: dict[str, Any]) -> list[str]:
+        """Single source of truth for what the system flags as a known unknown.
+
+        Used by the Synthesis Agent's narrative and by the orchestrator's
+        checklist builder so that the agent's reasoning text and the report's
+        `known_unknowns` field can never disagree.
+        """
+        unknowns: list[str] = []
+        pattern = evidence.get("pattern") or {}
+        if not (pattern.get("historical_matches") or {}).get("matches"):
+            unknowns.append("No historical analogue in fleet database.")
+        if not (pattern.get("diagnostic") or {}).get("findings"):
+            unknowns.append(
+                "No design-limit excursions detected; symptom may be sub-threshold drift."
+            )
+        return unknowns
+
     def _mock_reason(self, ctx: AgentContext, evidence: dict[str, Any]) -> str:
         hyps = ctx.shared_findings.get("hypotheses") or []
         if not hyps:
             return "Insufficient data to synthesise a root cause - escalate to on-site engineer."
         top = hyps[0]
-        unknowns = []
-        if not (evidence.get("pattern") or {}).get("historical_matches", {}).get("matches"):
-            unknowns.append("No historical analogue in fleet database.")
-        diag_findings = (evidence.get("pattern") or {}).get("diagnostic", {}).get("findings", [])
-        if not diag_findings:
-            unknowns.append("No design-limit excursions detected; symptom may be sub-threshold drift.")
+        unknowns = self._known_unknowns(evidence)
         out = [f"Top root cause (p={top['likelihood']}): {top['summary']}"]
         if len(hyps) > 1:
             out.append("Alternatives:")

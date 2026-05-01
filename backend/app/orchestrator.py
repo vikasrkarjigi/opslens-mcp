@@ -126,7 +126,11 @@ class Orchestrator:
             or SafetyVerdict(approved=True).model_dump()
         )
 
-        # Human review checklist - merge blocking concerns + safety protocols + diagnostic flags.
+        # Human review checklist - merge blocking concerns + safety protocols
+        # + design-limit cautions + every known-unknown the Synthesis Agent
+        # declared. Keeping the Synthesis Agent as the *only* source for known
+        # unknowns prevents drift between the agent's narrative bullets and
+        # the structured `known_unknowns` field on the report.
         checklist: list[HumanReviewItem] = []
         for blocker in verdict.blocking_concerns:
             checklist.append(HumanReviewItem(label=blocker, rationale="Safety Critic blocking concern", severity="critical"))
@@ -134,10 +138,10 @@ class Orchestrator:
             checklist.append(HumanReviewItem(label=proto, rationale="Mandatory safety protocol", severity="critical"))
         for caution in verdict.cautions:
             checklist.append(HumanReviewItem(label=caution, rationale="Reading exceeds design limit", severity="caution"))
-        if not (ctx.shared_findings.get("pattern") or {}).get("historical_matches", {}).get("matches"):
+        for unknown in ctx.shared_findings.get("known_unknowns") or []:
             checklist.append(
                 HumanReviewItem(
-                    label="No historical analogue - confirm hypothesis on-site before parts order.",
+                    label=unknown,
                     rationale="Known unknown",
                     severity="caution",
                 )
