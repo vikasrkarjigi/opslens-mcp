@@ -1,10 +1,34 @@
-# OpsLens MCP — Multi-Agent Industrial RCA
+# OpsLens MCP: Multi-Agent Industrial RCA
 
-> *"The most responsible AI is not the one with the most confidence — it is the one that knows what it does not know."*
+> *"The most responsible AI is not the one with the most confidence; it is the one that knows what it does not know."*
 
 OpsLens is a hackathon-grade industrial Root Cause Analysis platform built on Anthropic's **Model Context Protocol**. Five specialised agents debate over a synthetic fleet of industrial assets while every tool call is mediated by a deterministic, **visible Safety Gateway** the LLM cannot override.
 
-The demo runs end-to-end without an API key — agents fall back to deterministic mock reasoning so you can show the safety story, the gateway audit trail, and the report exporter without paying for tokens.
+The demo runs end-to-end without an API key. Agents fall back to deterministic mock reasoning so you can show the safety story, the gateway audit trail, and the report exporter without paying for tokens.
+
+## What it does
+
+**The problem.** When an industrial asset misbehaves (bearing vibration, motor imbalance, heat-exchanger drift) the on-shift operator has minutes to decide: keep running, throttle, or stop and escalate. Doing this well requires sifting sensor history, maintenance logs, fleet-wide incident analogues, equipment specs, and SOPs simultaneously. Most teams do it from memory, under pressure, with no audit trail.
+
+**The solution.** OpsLens turns that decision into an auditable, multi-agent investigation:
+
+1. **Operator picks an incident** in the dashboard and edits the free-text description.
+2. **Five specialist agents debate the case in two rounds**, each with a narrow remit:
+   - `Data Agent` reads sensors, equipment specs, and recent maintenance history.
+   - `Pattern Agent` matches the anomaly against fleet incident history and runs diagnostic checks.
+   - `Hypothesis Agent` proposes 2 to 3 root causes with explicit likelihoods.
+   - `Safety Critic` has hard veto authority. It checks design limits, operator-reported danger phrases (e.g. burning smell), cites SOPs, and emits one of three verdicts: `CLEAR_TO_PROCEED`, `CAUTION_REQUIRED`, or `DO_NOT_RESTART`.
+   - `Synthesis Agent` writes the final RCA report and lists known unknowns. CAPA drafting is automatically suppressed when safety vetoes a restart.
+3. **Every tool call is mediated by a deterministic Safety Gateway** (a Python policy layer the LLM cannot override) that allow-lists tools per agent role, stamps each call with risk and access metadata, and writes a tamper-evident audit row.
+4. **The operator gets a Markdown export** containing the verdict, top hypothesis, alternatives, known unknowns, a severity-tagged human review checklist, the optional CAPA draft, and the full MCP audit trail.
+
+**Why it is interesting.**
+
+- **The engineer is the final decision-maker.** OpsLens never auto-acts. It produces a checklist of human checks and a list of known unknowns alongside the recommendation.
+- **Safety is enforced in code, not in a prompt.** The Safety Gateway is a deterministic policy layer; jail-breaking the LLM cannot bypass it.
+- **The audit trail is first-class UI.** Every tool call is rendered live to the operator with `agent → gateway decision → tool → duration` and the rejection reason if blocked.
+- **MCP is real.** The same `mcp_server/server.py` runs in Claude Desktop and inside the orchestrator over stdio.
+- **Runs without an API key.** Deterministic mock reasoning lets you demo the safety, gateway, and reporting stories with zero token cost; drop in an Anthropic key to swap to live Claude reasoning.
 
 ## What's in the repo
 
@@ -67,7 +91,7 @@ mock for real Claude reasoning:
 ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-Without a key, the orchestrator runs every agent in deterministic mock mode — the
+Without a key, the orchestrator runs every agent in deterministic mock mode. The
 safety verdict, gateway audit trail, and report export all still work.
 
 ### 2. Frontend (new terminal)
@@ -103,9 +127,9 @@ conclusion.
 ## Why this design wins the room
 
 - **MCP is real.** The same `mcp_server/server.py` works in Claude Desktop and inside our orchestrator over stdio.
-- **Safety is visible.** The gateway is a deterministic Python policy layer, not a prompt — its decisions are rendered to the operator as they happen.
+- **Safety is visible.** The gateway is a deterministic Python policy layer, not a prompt; its decisions are rendered to the operator as they happen.
 - **Agents debate.** Two rounds: specialists collect evidence, then the Hypothesis and Safety agents revisit with full context before Synthesis commits.
-- **The engineer wins.** The output is not an "answer" — it is a checklist plus a list of known unknowns plus an audit trail.
+- **The engineer wins.** The output is not an "answer"; it is a checklist plus a list of known unknowns plus an audit trail.
 
 ## Roadmap
 

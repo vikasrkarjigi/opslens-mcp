@@ -5,7 +5,7 @@
 
 ---
 
-## SOP-MAINT-04 — Post-Maintenance Verification
+## SOP-MAINT-04: Post-Maintenance Verification
 
 **Applies to:** rotating equipment after bearing, seal, or coupling work.
 
@@ -20,7 +20,7 @@
 
 ---
 
-## SOP-ELEC-02 — Electrical Anomaly Response
+## SOP-ELEC-02: Electrical Anomaly Response
 
 **Applies to:** any phase imbalance, overcurrent, or insulation-resistance excursion.
 
@@ -29,13 +29,13 @@
 2. LOTO upstream breaker; verify zero potential at the terminal box with a calibrated meter.
 3. Discharge any capacitor banks; wait minimum 5 minutes.
 4. Megger test phase-to-phase and phase-to-earth at 500 V DC; record on Form ELEC-02B.
-5. If any reading is below 1 MΩ, escalate to capital review — do not patch in service.
+5. If any reading is below 1 MΩ, escalate to capital review. Do not patch in service.
 
 **Trigger thresholds:** phase current imbalance > 5 %, sustained overcurrent > 10 %, winding temperature > nameplate × 1.05.
 
 ---
 
-## SOP-QUAL-07 — Dimensional / Process Drift Response
+## SOP-QUAL-07: Dimensional / Process Drift Response
 
 **Applies to:** any in-process metric drifting outside spec for ≥ 2 consecutive batches or ≥ 24 h.
 
@@ -48,7 +48,7 @@
 
 ---
 
-## SOP-SAFE-01 — Lockout / Tagout
+## SOP-SAFE-01: Lockout / Tagout
 
 **Applies to:** every internal inspection, disassembly, or electrical work.
 
@@ -56,7 +56,7 @@
 1. Notify operators on shift; agree on isolation boundary.
 2. Shut down asset following the documented stop sequence.
 3. Isolate every energy source: electrical, pneumatic, hydraulic, thermal, stored mechanical.
-4. Apply **personal** locks — one per worker. No shared locks.
+4. Apply **personal** locks: one per worker. No shared locks.
 5. Tag each lock with worker name, date, and reason.
 6. Verify zero energy at the work point with a calibrated test before contact.
 7. Perform the work.

@@ -2,7 +2,7 @@
 
 Multi-agent industrial RCA system built on Anthropic's Model Context Protocol.
 
-> *"The most responsible AI is not the one with the most confidence — it is the one that knows what it does not know."*
+> *"The most responsible AI is not the one with the most confidence; it is the one that knows what it does not know."*
 
 ## What you get
 
@@ -85,7 +85,7 @@ curl -X POST http://localhost:8000/rca `
   -H "Content-Type: application/json" `
   -d '{"incident_id":"INC-1","asset_id":"COMP-118","description":"discharge temp climbing, motor current high"}'
 
-# streaming (SSE) — useful for the Next.js UI
+# streaming (SSE), useful for the Next.js UI
 curl -N -X POST http://localhost:8000/rca/stream `
   -H "Content-Type: application/json" `
   -d '{"incident_id":"INC-2","asset_id":"HX-307","description":"flow dropping, outlet temperature rising"}'

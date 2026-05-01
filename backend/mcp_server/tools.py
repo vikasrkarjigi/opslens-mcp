@@ -178,7 +178,12 @@ def search_sop(query: str, limit: int = 3) -> dict[str, Any]:
         if line.startswith("## SOP-"):
             if current:
                 sections.append(current)
-            current = {"id": line[3:].split("—")[0].strip(), "heading": line[3:].strip(), "body": ""}
+            # Heading format: `## SOP-XXX-NN: Title` or `## SOP-XXX-NN Title`.
+            # The SOP id is always the first whitespace-delimited token, so we
+            # split on the first space and strip a trailing colon if present.
+            header = line[3:].strip()
+            sop_id = header.split()[0].rstrip(":")
+            current = {"id": sop_id, "heading": header, "body": ""}
         elif current is not None:
             current["body"] += line + "\n"
     if current:
@@ -211,7 +216,7 @@ def generate_capa_draft(
 ) -> dict[str, Any]:
     """Generate a Corrective & Preventive Action draft.
 
-    This is a *draft* — it must be reviewed and signed by a human engineer
+    This is a *draft*; it must be reviewed and signed by a human engineer
     before being submitted to the CMMS / quality system.
     """
     corrective = corrective_actions or [
@@ -226,7 +231,7 @@ def generate_capa_draft(
     ]
     return {
         "incident_id": incident_id,
-        "draft_status": "DRAFT — requires engineer sign-off",
+        "draft_status": "DRAFT: requires engineer sign-off",
         "root_cause": root_cause,
         "corrective_actions": corrective,
         "preventive_actions": preventive,
@@ -247,8 +252,8 @@ def get_safety_protocols(asset_id: str | None = None, asset_class: str | None = 
 
 
 # --- registry ---------------------------------------------------------------
-# `risk` — operational risk if this tool is mis-used or its result is acted on
-#          without review. `access` — whether the tool can change anything.
+# `risk`: operational risk if this tool is mis-used or its result is acted on
+#         without review. `access`: whether the tool can change anything.
 # These badges are surfaced in the MCP Gateway UI so the operator can verify
 # at a glance that nothing here writes back to plant systems.
 TOOLS: dict[str, dict[str, Any]] = {

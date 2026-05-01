@@ -27,7 +27,7 @@
   },
   {
     "incident_id": "INC-3005",
-    "title": "Electrical anomaly on MTR-512 — safety escalation",
+    "title": "Electrical anomaly on MTR-512: safety escalation",
     "asset_id": "MTR-512",
     "site": "PLANT-2",
     "shift": "Swing (14:00-22:00)",
