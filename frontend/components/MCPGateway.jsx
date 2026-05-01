@@ -3,8 +3,9 @@
 import { useMemo } from "react";
 import clsx from "clsx";
 import { Shield, Lock, ArrowRight, XCircle, CheckCircle2 } from "lucide-react";
-import { Card, CardBody, CardHeader } from "./ui/Card";
+import { Card, CardBody } from "./ui/Card";
 import { Badge } from "./ui/Badge";
+import { AGENT_META } from "@/lib/agents";
 
 const RISK_TONE = { low: "ok", medium: "warn", high: "danger" };
 
@@ -48,25 +49,33 @@ export default function MCPGateway({ events }) {
 
   return (
     <Card className="h-full">
-      <CardHeader>
-        <div className="flex items-center gap-3">
-          <div className="rounded-md p-2 bg-violet-500/15 text-violet-300">
-            <Shield size={16} />
+      {/*
+        Custom header (not <CardHeader>) because the right-column panel is
+        narrow (~25%); the default justify-between layout caused the title
+        to wrap onto 3 lines while the badges floated awkwardly. Here the
+        title gets its own row, and both badges sit on a tidy second row.
+      */}
+      <div className="flex items-start gap-3 px-5 py-4 border-b border-border">
+        <div className="flex-none rounded-xl p-2.5 bg-indigo-100 text-indigo-700">
+          <Shield size={18} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-bold text-ink tracking-tight leading-snug">
+            MCP Safety Gateway
           </div>
-          <div>
-            <div className="text-sm font-semibold text-ink flex items-center gap-2">
-              MCP Safety Gateway
-              <Badge tone="accent">
-                <Lock size={10} /> non-overridable
-              </Badge>
-            </div>
-            <div className="text-xs text-muted">
-              Deterministic policy layer between every agent and every MCP tool.
-            </div>
+          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+            <Badge tone="accent">
+              <Lock size={10} /> non-overridable
+            </Badge>
+            <Badge tone="info">
+              <span className="font-mono">{collapsed.length}</span> calls
+            </Badge>
+          </div>
+          <div className="mt-2 text-xs text-muted leading-snug">
+            Deterministic policy layer between every agent and every MCP tool.
           </div>
         </div>
-        <Badge tone="info">{collapsed.length} calls</Badge>
-      </CardHeader>
+      </div>
       <CardBody>
         {collapsed.length === 0 && (
           <div className="text-xs text-muted italic py-8 text-center">
@@ -86,19 +95,28 @@ export default function MCPGateway({ events }) {
 
 function GatewayRow({ row, index }) {
   const blocked = row.status === "blocked";
+  // Pull the per-agent border colour so every row carries a thin accent
+  // matching its origin agent. Unknown agents fall back to a neutral border.
+  const agentMeta = row.agent ? AGENT_META[row.agent] : null;
+  const agentBorder = agentMeta?.border || "before:bg-slate-300";
   return (
     <li
       className={clsx(
-        "rounded-lg border p-3 text-sm",
+        // `before:` pseudo gives a 3px coloured agent stripe on the left edge.
+        "relative rounded-xl border p-3 pl-4 text-sm overflow-hidden transition-colors",
+        "before:absolute before:left-0 before:top-0 before:h-full before:w-[3px]",
+        agentBorder,
         blocked
-          ? "border-rose-500/40 bg-rose-500/5"
-          : "border-border bg-panel2/60"
+          ? "border-rose-200 bg-rose-50"
+          : "border-border bg-white hover:bg-slate-50"
       )}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <span className="font-mono text-xs text-muted">#{String(index).padStart(2, "0")}</span>
+        <span className="font-mono text-[11px] font-semibold text-muted">
+          #{String(index).padStart(2, "0")}
+        </span>
         <Badge tone="default">{row.agent?.replace("_", " ")}</Badge>
-        <ArrowRight size={12} className="text-muted" />
+        <ArrowRight size={12} className="text-slate-400" />
         {blocked ? (
           <Badge tone="danger">
             <XCircle size={10} /> blocked
@@ -108,39 +126,51 @@ function GatewayRow({ row, index }) {
             <CheckCircle2 size={10} /> approved
           </Badge>
         )}
-        <ArrowRight size={12} className="text-muted" />
-        <span className="font-mono text-ink">{row.tool}</span>
+        <ArrowRight size={12} className="text-slate-400" />
+        <span className="font-mono text-ink font-medium">{row.tool}</span>
         {row.risk_level && row.risk_level !== "unknown" && (
-          <Badge tone={RISK_TONE[row.risk_level] || "default"}>risk: {row.risk_level}</Badge>
+          <Badge tone={RISK_TONE[row.risk_level] || "default"}>
+            risk: {row.risk_level}
+          </Badge>
         )}
         {row.access && row.access !== "unknown" && (
-          <Badge tone={row.access === "read" ? "ok" : row.access === "draft-only" ? "warn" : "danger"}>
+          <Badge
+            tone={
+              row.access === "read"
+                ? "ok"
+                : row.access === "draft-only"
+                  ? "warn"
+                  : "danger"
+            }
+          >
             {row.access}
           </Badge>
         )}
         {row.duration_ms != null && (
-          <span className="ml-auto text-xs text-muted">{row.duration_ms} ms</span>
+          <span className="ml-auto font-mono text-[11px] text-muted">
+            {row.duration_ms} ms
+          </span>
         )}
       </div>
 
       {row.arguments && Object.keys(row.arguments).length > 0 && (
-        <div className="mt-1.5 font-mono text-xs text-muted truncate">
+        <div className="mt-1.5 font-mono text-[11px] text-muted truncate">
           args: {JSON.stringify(row.arguments)}
         </div>
       )}
 
       {blocked && row.rejection_reason && (
-        <div className="mt-2 rounded-md bg-rose-500/10 px-2 py-1 text-xs text-rose-300">
-          Gateway: {row.rejection_reason}
+        <div className="mt-2 rounded-md border border-rose-200 bg-rose-100/60 px-2.5 py-1.5 text-xs text-rose-700">
+          <span className="font-semibold">Gateway:</span> {row.rejection_reason}
         </div>
       )}
 
       {!blocked && row.result && (
         <details className="mt-2">
-          <summary className="cursor-pointer text-xs text-muted hover:text-ink">
+          <summary className="cursor-pointer text-xs text-muted hover:text-ink select-none">
             View result payload
           </summary>
-          <pre className="mt-1 max-h-48 overflow-auto rounded-md bg-bg p-2 text-[11px] text-ink/80">
+          <pre className="mt-1 max-h-48 overflow-auto rounded-md border border-border bg-slate-50 p-2 text-[11px] text-slate-700">
             {JSON.stringify(row.result, null, 2)}
           </pre>
         </details>

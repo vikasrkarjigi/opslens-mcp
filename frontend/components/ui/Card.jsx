@@ -4,7 +4,7 @@ export function Card({ className, children, ...rest }) {
   return (
     <div
       className={clsx(
-        "rounded-xl border border-border bg-panel/80 backdrop-blur-sm",
+        "rounded-2xl border border-border bg-panel shadow-card transition-shadow hover:shadow-cardHover",
         className
       )}
       {...rest}
@@ -16,12 +16,17 @@ export function Card({ className, children, ...rest }) {
 
 export function CardHeader({ className, children }) {
   return (
-    <div className={clsx("flex items-center justify-between px-4 py-3 border-b border-border", className)}>
+    <div
+      className={clsx(
+        "flex items-center justify-between gap-3 px-5 py-4 border-b border-border",
+        className
+      )}
+    >
       {children}
     </div>
   );
 }
 
 export function CardBody({ className, children }) {
-  return <div className={clsx("p-4", className)}>{children}</div>;
+  return <div className={clsx("p-5", className)}>{children}</div>;
 }

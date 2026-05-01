@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "OpsLens MCP — Multi-Agent Industrial RCA",
+  title: "OpsLens MCP: Multi-Agent Industrial RCA",
   description:
     "Auditable, multi-agent root-cause analysis built on Anthropic's Model Context Protocol.",
 };

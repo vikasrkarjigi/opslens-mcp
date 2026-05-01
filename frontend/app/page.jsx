@@ -149,7 +149,7 @@ export default function Page() {
               </Button>
             </div>
             {error && (
-              <div className="rounded-lg border border-rose-500/40 bg-rose-500/10 p-3 text-xs text-rose-300">
+              <div className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
                 {error}
               </div>
             )}
@@ -187,7 +187,7 @@ export default function Page() {
         </main>
 
         <footer className="mt-10 text-center text-xs text-muted">
-          OpsLens MCP — “The most responsible AI is not the one with the most confidence,
+          OpsLens MCP. “The most responsible AI is not the one with the most confidence;
           it is the one that knows what it does not know.”
         </footer>
       </div>
@@ -197,13 +197,13 @@ export default function Page() {
 
 function Header({ health }) {
   return (
-    <header className="flex items-center justify-between">
+    <header className="flex items-center justify-between gap-4 flex-wrap">
       <div className="flex items-center gap-3">
-        <div className="rounded-xl bg-accent/15 p-2.5 text-accent">
-          <Sparkles size={20} />
+        <div className="rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 p-3 text-white shadow-lg shadow-indigo-500/30">
+          <Sparkles size={22} />
         </div>
         <div>
-          <h1 className="text-xl font-semibold text-ink">OpsLens MCP</h1>
+          <h1 className="text-2xl font-bold text-ink tracking-tight">OpsLens MCP</h1>
           <p className="text-xs text-muted">
             Multi-Agent Industrial RCA · powered by Anthropic Model Context Protocol
           </p>
@@ -215,8 +215,13 @@ function Header({ health }) {
             <Badge tone={health.mock_llm ? "warn" : "ok"}>
               {health.mock_llm ? "Mock LLM" : "Claude live"}
             </Badge>
-            <Badge tone="info">{health.tool_count} MCP tools</Badge>
-            <Badge tone="ok">backend ok</Badge>
+            <Badge tone="info">
+              <span className="font-mono">{health.tool_count}</span> MCP tools
+            </Badge>
+            <Badge tone="ok">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 pulse-dot" />
+              backend ok
+            </Badge>
           </>
         ) : (
           <Badge tone="danger">backend offline</Badge>
